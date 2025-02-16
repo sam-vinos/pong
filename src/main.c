@@ -16,12 +16,21 @@ int
 main(void)
 {
 	unsigned char ry1 = HEIGHT / 2, ry2 = HEIGHT / 2;
-	unsigned char bx = WIDTH / 2, by = HEIGHT / 2;
+	unsigned char bx = WIDTH / 2, by = HEIGHT / 2 + 1;
 	unsigned char counter_l = 0, counter_r = 0;
 	signed char step_x = time(NULL) & 1 ? 1 : -1;
 	signed char step_y = 0;
+
+
+	//initscr();
+	//cbreak();
+	//noecho();
+
+
+
 	printf("%s", "\033[H\033[2j");
 	print_field(ry1, ry2, bx, by);
+	printf(" left - %d\t\t\t\t\t\t\t\trigth - %d\n", counter_l, counter_r);
 	while (counter_l < MAX_COUNTER && counter_r < MAX_COUNTER) {
 		printf("%s", "\033[H\033[2j");
 		switch (getchar()) {
@@ -51,11 +60,13 @@ main(void)
 			step_x = -step_x;
 			step_y = !step_y ? (time(NULL) & 1 ? 1 : -1) : step_y;
 		} else if (!bx) {
+			counter_r++;
 			bx = 2;
 			by = ry1 + 1;
 			step_x = 1;
 			step_y = 0;
 		} else if (bx == WIDTH + 1) {
+			counter_l++;
 			bx = WIDTH - 1;
 			by = ry2 + 1;
 			step_x = -1;
@@ -63,7 +74,10 @@ main(void)
 		} else if (step_y && (by == 1 || by == HEIGHT)) step_y = -step_y;
 		printf("%s", "\033[H\033[2j");
 		print_field(ry1, ry2, bx, by);
+		printf(" left - %d\t\t\t\t\t\t\t\trigth - %d\n", counter_l, counter_r);
 	}
+	//printf("%s", "\033[H\033[2j");
+	printf("\t\t\t\tTHE %s PLAYER WINS\n", counter_l > counter_r ? "LEFT" : "RIGHT");
 	return 0;
 }
 
@@ -77,8 +91,8 @@ print_field(unsigned char ry1, unsigned char ry2, unsigned char bx, unsigned cha
 			else if (!y || y == HEIGHT + 1) putchar('=');
 			else if ((x == 1 && y >= ry1 && y <= ry1 + 2) ||\
 					(x == WIDTH && y >= ry2 && y <= ry2 + 2)) putchar('#');
-			else if (x == WIDTH / 2) putchar('!');
 			else if (x == bx && y == by) putchar('o');
+			else if (x == WIDTH / 2) putchar('!');
 			else putchar(' ');
 		}
 		putchar('\n');
