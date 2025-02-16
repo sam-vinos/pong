@@ -15,15 +15,15 @@ void print_field(unsigned char ry1, unsigned char ry2, unsigned char bx, unsigne
 int
 main(void)
 {
-	//printf("%s", "\033[H\033[2j");
 	unsigned char ry1 = HEIGHT / 2, ry2 = HEIGHT / 2;
 	unsigned char bx = WIDTH / 2, by = HEIGHT / 2;
 	unsigned char counter_l = 0, counter_r = 0;
 	signed char step_x = time(NULL) & 1 ? 1 : -1;
 	signed char step_y = 0;
+	printf("%s", "\033[H\033[2j");
+	print_field(ry1, ry2, bx, by);
 	while (counter_l < MAX_COUNTER && counter_r < MAX_COUNTER) {
 		printf("%s", "\033[H\033[2j");
-		print_field(ry1, ry2, bx, by);
 		switch (getchar()) {
 			case 'A':
 			case 'a':
@@ -44,6 +44,25 @@ main(void)
 		}
 		bx += step_x;
 		by += step_y;
+		if (bx == 2 && by >= ry1 && by <= ry1 + 2) {
+			step_x = -step_x;
+			step_y = !step_y ? (time(NULL) & 1 ? 1 : -1) : step_y;
+		} else if (bx == WIDTH - 1 && by >= ry2 && by <= ry2 + 2) {
+			step_x = -step_x;
+			step_y = !step_y ? (time(NULL) & 1 ? 1 : -1) : step_y;
+		} else if (!bx) {
+			bx = 2;
+			by = ry1 + 1;
+			step_x = 1;
+			step_y = 0;
+		} else if (bx == WIDTH + 1) {
+			bx = WIDTH - 1;
+			by = ry2 + 1;
+			step_x = -1;
+			step_y = 0;
+		} else if (step_y && (by == 1 || by == HEIGHT)) step_y = -step_y;
+		printf("%s", "\033[H\033[2j");
+		print_field(ry1, ry2, bx, by);
 	}
 	return 0;
 }
