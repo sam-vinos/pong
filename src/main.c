@@ -1,0 +1,67 @@
+#include <ncurses.h>
+#include <stdio.h>
+#include <time.h>
+
+
+#define WIDTH		80
+#define HEIGHT		25
+
+#define MAX_COUNTER	21
+
+
+void print_field(unsigned char ry1, unsigned char ry2, unsigned char bx, unsigned char by);
+
+
+int
+main(void)
+{
+	//printf("%s", "\033[H\033[2j");
+	unsigned char ry1 = HEIGHT / 2, ry2 = HEIGHT / 2;
+	unsigned char bx = WIDTH / 2, by = HEIGHT / 2;
+	unsigned char counter_l = 0, counter_r = 0;
+	signed char step_x = time(NULL) & 1 ? 1 : -1;
+	signed char step_y = 0;
+	while (counter_l < MAX_COUNTER && counter_r < MAX_COUNTER) {
+		printf("%s", "\033[H\033[2j");
+		print_field(ry1, ry2, bx, by);
+		switch (getchar()) {
+			case 'A':
+			case 'a':
+				ry1 -= ry1 > 1 ? 1 : 0;
+				break;
+			case 'Z':
+			case 'z':
+				ry1 += ry1 + 2 < HEIGHT ? 1 : 0;
+				break;
+			case 'K':
+			case 'k':
+				ry2 -= ry2 > 1 ? 1 : 0;
+				break;
+			case 'M':
+			case 'm':
+				ry2 += ry2 + 2 < HEIGHT ? 1 : 0;
+				break;
+		}
+		bx += step_x;
+		by += step_y;
+	}
+	return 0;
+}
+
+
+void
+print_field(unsigned char ry1, unsigned char ry2, unsigned char bx, unsigned char by)
+{
+	for (unsigned char x, y = 0; y != HEIGHT + 2; y++) {
+		for (x = 0; x != WIDTH + 2; x++) {
+			if (!x || x == WIDTH + 1) putchar('|');
+			else if (!y || y == HEIGHT + 1) putchar('=');
+			else if ((x == 1 && y >= ry1 && y <= ry1 + 2) ||\
+					(x == WIDTH && y >= ry2 && y <= ry2 + 2)) putchar('#');
+			else if (x == WIDTH / 2) putchar('!');
+			else if (x == bx && y == by) putchar('o');
+			else putchar(' ');
+		}
+		putchar('\n');
+	}
+}
