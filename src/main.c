@@ -50,10 +50,7 @@ main(void)
 		}
 		bx += step_x;
 		by += step_y;
-		if (bx == 2 && by >= ry1 && by <= ry1 + 2) {
-			step_x = -step_x;
-			step_y = !step_y ? (time(NULL) & 1 ? 1 : -1) : step_y;
-		} else if (bx == WIDTH - 1 && by >= ry2 && by <= ry2 + 2) {
+		if ((bx == 2 && by >= ry1 && by <= ry1 + 2) || (bx == WIDTH - 1 && by >= ry2 && by <= ry2 + 2)) {
 			step_x = -step_x;
 			step_y = !step_y ? (time(NULL) & 1 ? 1 : -1) : step_y;
 		} else if (!bx) {
