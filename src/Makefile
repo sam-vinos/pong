@@ -15,4 +15,4 @@ clean:
 
 
 $(NAME_PROGRAM): $(SOURCE)
-	$(CC) $^ -o $@
+	$(CC) $^ -o $@ -lncurses
