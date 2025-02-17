@@ -72,8 +72,9 @@ main(void)
 		clear();
 		print_field(ry1, ry2, bx, by);
 		printw(" left - %d\t\t\t\t\t\t\t\trigth - %d\n", counter_l, counter_r);
-		//sleep(85);
+		usleep(80000);
 	}
+	clear();
 	printw("\t\t\t\tTHE %s PLAYER WINS\n", counter_l > counter_r ? "LEFT" : "RIGHT");
 	refresh();
 	return 0;
