@@ -1,13 +1,15 @@
 #include <ncurses.h>
-#include <unistd.h>
+//#include <unistd.h>
 #include <stdio.h>
 #include <time.h>
 
 
-#define WIDTH		80
-#define HEIGHT		25
+#define WIDTH			80
+#define HEIGHT			25
 
-#define MAX_COUNTER	21
+#define MAX_COUNTER		21
+
+#define BALL_MOVEMENT_FRAME	250
 
 
 void print_field(unsigned char ry1, unsigned char ry2, unsigned char bx, unsigned char by);
@@ -21,6 +23,7 @@ main(void)
 	unsigned char counter_l = 0, counter_r = 0;
 	signed char step_x = time(NULL) & 1 ? 1 : -1;
 	signed char step_y = 0;
+	unsigned long long counter_fps = BALL_MOVEMENT_FRAME;
 	initscr();
 	cbreak();
 	noecho();
@@ -48,28 +51,31 @@ main(void)
 				ry2 += ry2 + 2 < HEIGHT ? 1 : 0;
 				break;
 		}
-		bx += step_x;
-		by += step_y;
-		if ((bx == 2 && by >= ry1 && by <= ry1 + 2) || (bx == WIDTH - 1 && by >= ry2 && by <= ry2 + 2)) {
-			step_x = -step_x;
-			step_y = !step_y ? (time(NULL) & 1 ? 1 : -1) : step_y;
-		} else if (!bx) {
-			counter_r++;
-			bx = 2;
-			by = ry1 + 1;
-			step_x = 1;
-			step_y = 0;
-		} else if (bx == WIDTH + 1) {
-			counter_l++;
-			bx = WIDTH - 1;
-			by = ry2 + 1;
-			step_x = -1;
-			step_y = 0;
-		} else if (step_y && (by == 1 || by == HEIGHT)) step_y = -step_y;
+		if (counter_fps++ == BALL_MOVEMENT_FRAME) {
+			bx += step_x;
+			by += step_y;
+			if ((bx == 2 && by >= ry1 && by <= ry1 + 2) || (bx == WIDTH - 1 && by >= ry2 && by <= ry2 + 2)) {
+				step_x = -step_x;
+				step_y = !step_y ? (time(NULL) & 1 ? 1 : -1) : step_y;
+			} else if (!bx) {
+				counter_r++;
+				bx = 2;
+				by = ry1 + 1;
+				step_x = 1;
+				step_y = 0;
+			} else if (bx == WIDTH + 1) {
+				counter_l++;
+				bx = WIDTH - 1;
+				by = ry2 + 1;
+				step_x = -1;
+				step_y = 0;
+			} else if (step_y && (by == 1 || by == HEIGHT)) step_y = -step_y;
+			counter_fps = 0;
+		}
 		clear();
 		print_field(ry1, ry2, bx, by);
 		printw(" left - %d\t\t\t\t\t\t\t\trigth - %d\n", counter_l, counter_r);
-		usleep(80000);
+		//usleep(1000);
 	}
 	clear();
 	printw("\t\t\t\tTHE %s PLAYER WINS\n", counter_l > counter_r ? "LEFT" : "RIGHT");
