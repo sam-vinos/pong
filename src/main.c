@@ -7,7 +7,7 @@
 #define WIDTH			80
 #define HEIGHT			25
 
-#define MAX_COUNTER		21
+#define MAX_COUNTER		10
 
 #define BALL_MOVEMENT_FRAME	250
 
